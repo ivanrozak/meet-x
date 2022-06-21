@@ -77,7 +77,9 @@ const ContextProvider = ({ children }) => {
         console.log('jalan nih', newStream)
         stream.removeTrack(currentAudioTrack[0])
         stream.removeTrack(currentVideoTracks[0])
-        stream.addTrack(newStream.getTracks())
+        // stream.addTrack(newStream.getTracks())
+        stream.addTrack(newStream.getAudioTracks()[0])
+        stream.addTrack(newStream.getVideoTracks()[0])
         localPeer.replaceTrack(currentTrack, newStream.getTracks(), stream)
       }).catch((err) => {
         console.log('userMedia', err)
