@@ -51,65 +51,38 @@ const ContextProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    // if (selectedDevice && localPeer) {
-    if (selectedDevice) {
-      // getGUM()
+    if (selectedDevice && localPeer) {
       switchAudio()
     }
   }, [selectedDevice])
 
   const switchAudio = async () => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((currentStream) => {
-        setStream(currentStream);
-        console.log('asdas', currentStream)
-        myVideo.current.srcObject = currentStream;
-      });
+    try {
+      console.log('jalan disini')
+      const currentTrack = stream.getAudioTracks()
+      console.log('current Track', currentTrack)
+
+      // stop sending tracks to peers
+      currentTrack.forEach((t) => t.stop())
+
+      // new stream with new device
+      await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: {
+          deviceId: selectedDevice.deviceId
+        }
+      }).then((newStream) => {
+        console.log('jalan nih', newStream)
+        stream.removeTrack(currentTrack[0])
+        stream.addTrack(newStream.getAudioTracks()[0])
+        localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
+      }).catch((err) => {
+        console.log('userMedia', err)
+      })
+    } catch (error) {
+      console.log('Switch Audio Error', error)
+    }
   }
-
-  // const switchAudio = async () => {
-  //   try {
-  //     console.log('jalan disini')
-  //     const currentTrack = stream.getAudioTracks()
-  //     console.log('current Track', currentTrack)
-
-  //     // stop sending tracks to peers
-  //     currentTrack.forEach((t) => t.stop())
-
-  //     // new stream with new device
-  //     await navigator.mediaDevices.getUserMedia({
-  //       video: true,
-  //       audio: {
-  //         deviceId: selectedDevice.deviceId
-  //       }
-  //     }).then((newStream) => {
-  //       console.log('jalan nih', newStream)
-  //       stream.removeTrack(currentTrack[0])
-  //       stream.addTrack(newStream.getAudioTracks()[0])
-  //       // localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
-  //     }).catch((err) => {
-  //       console.log('userMedia', err)
-  //     })
-  //   } catch (error) {
-  //     console.log('Switch Audio Error', error)
-  //   }
-  // }
-
-  // const getGUM = () => {
-  //   const constraints = {
-  //     audio: {deviceId: selectedDevice.deviceId ? {exact: selectedDevice.deviceId} : undefined},
-  //     video: true
-  //   }
-
-  //   navigator.mediaDevices
-  //     .getUserMedia(constraints)
-  //     .then((currentStream) => {
-  //       setStream(currentStream);
-  //       myVideo.current.srcObject = currentStream;
-  //     });
-  //     console.log("gum running", selectedDevice)
-  // }
 
   const enumerateDevice = () => {
     navigator.mediaDevices.enumerateDevices().then((devices) => {
