@@ -3,7 +3,7 @@ import { SocketContext } from "../contexts/SocketContext";
 import Controls from "./Controls";
 
 const VideoContainer = () => {
-  const { callAccepted, myVideo, userVideo, callEnded, stream, inputDevices, selectedDevice, setSelectedDevice } =
+  const { callAccepted, myVideo, userVideo, callEnded, stream, inputDevices, setSelectedDevice } =
     useContext(SocketContext);
 
   function handleChange(e) {

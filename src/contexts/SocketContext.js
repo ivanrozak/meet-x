@@ -7,6 +7,8 @@ const SocketContext = createContext();
 const socket = io("https://meetx-backend.herokuapp.com/");
 // const socket = io("http://localhost:5000");
 
+let localPeer;
+
 const ContextProvider = ({ children }) => {
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
@@ -28,14 +30,14 @@ const ContextProvider = ({ children }) => {
       setName(nameInStorage);
     }
 
-    // navigator.mediaDevices
-    //   .getUserMedia({ video: true, audio: true })
-    //   .then((currentStream) => {
-    //     setStream(currentStream);
-    //     myVideo.current.srcObject = currentStream;
-    //   });
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((currentStream) => {
+        setStream(currentStream);
+        myVideo.current.srcObject = currentStream;
+      });
+
     enumerateDevice();
-    getGUM();
 
     socket.on("me", (id) => setMe(id));
 
@@ -49,40 +51,67 @@ const ContextProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (selectedDevice) {
-      getGUM()
+    if (selectedDevice && localPeer) {
+      // getGUM()
+      switchAudio()
     }
   }, [selectedDevice])
 
-  const getGUM = () => {
-    const constraints = {
-      audio: {deviceId: selectedDevice.deviceId ? {exact: selectedDevice.deviceId} : undefined},
-      video: true
+  const switchAudio = async () => {
+    try {
+      console.log('jalan disini')
+      const currentTrack = stream.getAudioTracks()
+
+      // stop sending tracks to peers
+      currentTrack.forEach((t) => t.stop())
+
+      // new stream with new device
+      await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: {
+          deviceId: selectedDevice.deviceId
+        }
+      }).then((newStream) => {
+        console.log('jalan nih', newStream)
+        stream.removeTrack(currentTrack[0])
+        stream.addTrack(newStream.getAudioTracks()[0])
+        localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
+      })
+    } catch (error) {
+      console.log('Switch Audio Error')
     }
-    navigator.mediaDevices
-      .getUserMedia(constraints)
-      .then((currentStream) => {
-        setStream(currentStream);
-        myVideo.current.srcObject = currentStream;
-      });
-    console.log("gum running", selectedDevice)
   }
+
+  // const getGUM = () => {
+  //   const constraints = {
+  //     audio: {deviceId: selectedDevice.deviceId ? {exact: selectedDevice.deviceId} : undefined},
+  //     video: true
+  //   }
+
+  //   navigator.mediaDevices
+  //     .getUserMedia(constraints)
+  //     .then((currentStream) => {
+  //       setStream(currentStream);
+  //       myVideo.current.srcObject = currentStream;
+  //     });
+  //     console.log("gum running", selectedDevice)
+  // }
 
   const enumerateDevice = () => {
     navigator.mediaDevices.enumerateDevices().then((devices) => {
       devices.forEach((deviceInfo) => {
         if (deviceInfo.kind === 'audioinput') {
           setInputDevices(prevState => [...prevState, deviceInfo])
+        } else if (deviceInfo.kind === 'audiooutput') {
+          console.log('audio output', deviceInfo)
+        } else if (deviceInfo.kind === 'videoinput') {
+          console.log('video', deviceInfo)
+        } else {
+          console.log('Some other kind of source/device: ', deviceInfo);
         }
-        // } else if (deviceInfo.kind === 'audiooutput') {
-        //   console.log('audio output', deviceInfo)
-        // } else if (deviceInfo.kind === 'videoinput') {
-        //   console.log('video', deviceInfo)
-        // } else {
-        //   console.log('Some other kind of source/device: ', deviceInfo);
-        // }
       })
-      if (selectedDevice) {
+      if (Object.keys(selectedDevice).length === 0) {
+        console.log('set dulu dag')
         setSelectedDevice(inputDevices[0])
       }
     })
@@ -107,9 +136,10 @@ const ContextProvider = ({ children }) => {
   };
 
   const callUser = (id) => {
-    const peer = new Peer({ initiator: true, trickle: false, stream });
+    // const peer = new Peer({ initiator: true, trickle: false, stream });
+    localPeer = new Peer({ initiator: true, trickle: false, stream });
 
-    peer.on("signal", (data) => {
+    localPeer.on("signal", (data) => {
       socket.emit("callUser", {
         userToCall: id,
         signalData: data,
@@ -118,17 +148,17 @@ const ContextProvider = ({ children }) => {
       });
     });
 
-    peer.on("stream", (currentStream) => {
+    localPeer.on("stream", (currentStream) => {
       userVideo.current.srcObject = currentStream;
     });
 
     socket.on("callAccepted", (signal) => {
       setCallAccepted(true);
 
-      peer.signal(signal);
+      localPeer.signal(signal);
     });
 
-    connectionRef.current = peer;
+    connectionRef.current = localPeer;
   };
 
   const leaveCall = () => {
