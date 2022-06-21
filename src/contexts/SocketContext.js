@@ -75,7 +75,7 @@ const ContextProvider = ({ children }) => {
         console.log('jalan nih', newStream)
         stream.removeTrack(currentTrack[0])
         stream.addTrack(newStream.getAudioTracks()[0])
-        localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
+        // localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
       })
     } catch (error) {
       console.log('Switch Audio Error', error)
