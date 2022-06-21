@@ -33,6 +33,7 @@ const ContextProvider = ({ children }) => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((currentStream) => {
+        console.log(currentStream.getTracks())
         setStream(currentStream);
         myVideo.current.srcObject = currentStream;
         enumerateDevice();
@@ -78,9 +79,16 @@ const ContextProvider = ({ children }) => {
         stream.removeTrack(currentAudioTrack[0])
         stream.removeTrack(currentVideoTracks[0])
         // stream.addTrack(newStream.getTracks())
-        stream.addTrack(newStream.getAudioTracks()[0])
-        // stream.addTrack(newStream.getVideoTracks()[0])
-        localPeer.replaceTrack(currentTrack, newStream.getTracks(), stream)
+        const newAudioTracks = newStream.getAudioTracks()[0]
+        const newVideoTracks = newStream.getVideoTracks()[0]
+        stream.addTrack(newAudioTracks)
+        stream.addTrack(newVideoTracks)
+
+        let newTracks = []
+        newTracks.push(newAudioTracks)
+        newTracks.push(newVideoTracks)
+
+        localPeer.replaceTrack(currentTrack, newTracks, stream)
       }).catch((err) => {
         console.log('userMedia', err)
       })
