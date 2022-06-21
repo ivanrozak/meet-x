@@ -35,9 +35,8 @@ const ContextProvider = ({ children }) => {
       .then((currentStream) => {
         setStream(currentStream);
         myVideo.current.srcObject = currentStream;
+        enumerateDevice();
       });
-
-    enumerateDevice();
 
     socket.on("me", (id) => setMe(id));
 
