@@ -60,6 +60,7 @@ const ContextProvider = ({ children }) => {
     try {
       console.log('jalan disini')
       const currentTrack = stream.getAudioTracks()
+      console.log('current Track', currentTrack)
 
       // stop sending tracks to peers
       currentTrack.forEach((t) => t.stop())
@@ -77,7 +78,7 @@ const ContextProvider = ({ children }) => {
         localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
       })
     } catch (error) {
-      console.log('Switch Audio Error')
+      console.log('Switch Audio Error', error)
     }
   }
 
