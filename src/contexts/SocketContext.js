@@ -131,12 +131,12 @@ const ContextProvider = ({ children }) => {
           deviceId: selectedDevice.deviceId
         }
       }).then((newStream) => {
-        console.log('jalan nih', newStream.getTracks())
-        stream.removeTrack(currentTrack[0])
-        stream.removeTrack(currentVideoTrack[0])
-        stream.addTrack(newStream.getAudioTracks()[0])
-        stream.addTrack(newStream.getVideoTracks()[0])
-        myVideo.current.srcObject = stream;
+        // console.log('jalan nih', newStream.getTracks())
+        // stream.removeTrack(currentTrack[0])
+        // stream.removeTrack(currentVideoTrack[0])
+        // stream.addTrack(newStream.getAudioTracks()[0])
+        // stream.addTrack(newStream.getVideoTracks()[0])
+        myVideo.current.srcObject = newStream;
         myVideo.current.play()
         // localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
       }).catch((err) => {
