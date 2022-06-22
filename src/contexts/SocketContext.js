@@ -60,7 +60,7 @@ const ContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (selectedDevice && localPeer) {
-      switchAudio()
+      // switchAudio()
     }
   }, [selectedDevice])
 
