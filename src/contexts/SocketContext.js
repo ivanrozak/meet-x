@@ -31,7 +31,9 @@ const ContextProvider = ({ children }) => {
     }
 
     navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
+      .getUserMedia({ video: true, audio: {
+        deviceId: '203A5AD6B6B07B25E55CEB24053D55B83FBE2FFF'
+      } })
       .then((currentStream) => {
         // console.log(currentStream.getTracks())
         const currentAudioTrack = currentStream.getAudioTracks()[0]
@@ -55,9 +57,9 @@ const ContextProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    // if (selectedDevice && localPeer) {
-    // }
-    switchAudio()
+    if (selectedDevice && localPeer) {
+      switchAudio()
+    }
   }, [selectedDevice])
 
   // handle for IPAD devices
