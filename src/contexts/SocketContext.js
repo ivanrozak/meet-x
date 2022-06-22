@@ -127,8 +127,6 @@ const ContextProvider = ({ children }) => {
         stream.removeTrack(currentTrack[0])
         stream.addTrack(newStream.getAudioTracks()[0])
         localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
-
-        myVideo.current.srcObject = newStream;
       }).catch((err) => {
         console.log('userMedia', err)
       })
