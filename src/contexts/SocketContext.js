@@ -149,6 +149,8 @@ const ContextProvider = ({ children }) => {
 
   const enumerateDevice = () => {
     navigator.mediaDevices.enumerateDevices().then((devices) => {
+      console.log('================')
+      console.log(devices)
       devices.forEach((deviceInfo) => {
         if (deviceInfo.kind === 'audioinput') {
           setInputDevices(prevState => [...prevState, deviceInfo])

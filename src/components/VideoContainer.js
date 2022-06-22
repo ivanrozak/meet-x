@@ -19,6 +19,7 @@ const VideoContainer = () => {
             <option value={JSON.stringify(item)} key={index}>{item.label}</option>
           ))}
         </select>
+        <div>{JSON.stringify(inputDevices)}</div>
       </div>
       <main className="h-full w-full flex flex-col md:flex-row items-center justify-center relative bg-gray-900">
         {stream && (
