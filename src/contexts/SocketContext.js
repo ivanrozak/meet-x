@@ -55,9 +55,9 @@ const ContextProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (selectedDevice && localPeer) {
-      switchAudio()
-    }
+    // if (selectedDevice && localPeer) {
+    // }
+    switchAudio()
   }, [selectedDevice])
 
   // handle for IPAD devices
