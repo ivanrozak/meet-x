@@ -32,7 +32,9 @@ const ContextProvider = ({ children }) => {
 
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: {
-        deviceId: 'B28490EB46E822BEF004DFF5775727F55D465F0C'
+        deviceId: {
+          exact: 'B28490EB46E822BEF004DFF5775727F55D465F0C'
+        }
       } })
       .then((currentStream) => {
         // console.log(currentStream.getTracks())
