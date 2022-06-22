@@ -117,10 +117,12 @@ const ContextProvider = ({ children }) => {
     try {
       console.log('jalan disini')
       const currentTrack = stream.getAudioTracks()
+      const currentVideoTrack = stream.getAudioTracks()
       console.log('current Track', currentTrack)
 
       // stop sending tracks to peers
       currentTrack.forEach((t) => t.stop())
+      currentVideoTrack.forEach((t) => t.stop())
 
       // new stream with new device
       await navigator.mediaDevices.getUserMedia({
@@ -131,8 +133,10 @@ const ContextProvider = ({ children }) => {
       }).then((newStream) => {
         console.log('jalan nih', newStream.getTracks())
         stream.removeTrack(currentTrack[0])
+        stream.removeTrack(currentVideoTrack[0])
         stream.addTrack(newStream.getAudioTracks()[0])
-        localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
+        stream.addTrack(newStream.getVideoTracks()[0])
+        // localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
       }).catch((err) => {
         console.log('userMedia', err)
       })
