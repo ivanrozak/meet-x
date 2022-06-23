@@ -18,6 +18,7 @@ const ContextProvider = ({ children }) => {
   const [me, setMe] = useState("");
   const [inputDevices, setInputDevices] = useState([])
   const [selectedDevice, setSelectedDevice] = useState({})
+  const [disable, setDisable] = useState(false)
 
   const myVideo = useRef();
   const userVideo = useRef();
@@ -116,6 +117,7 @@ const ContextProvider = ({ children }) => {
   const switchAudio = async () => {
     try {
       console.log('jalan disini')
+      setDisable(true)
       const currentTrack = stream.getAudioTracks()
 
       // stop sending tracks to peers
@@ -134,6 +136,9 @@ const ContextProvider = ({ children }) => {
         console.log(stream.getTracks())
         console.log(newStream.getTracks())
         localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
+        setTimeout(() => {
+          setDisable(false)
+        }, 5000)
       }).catch((err) => {
         console.log('userMedia', err)
       })
@@ -236,7 +241,8 @@ const ContextProvider = ({ children }) => {
         answerCall,
         inputDevices,
         selectedDevice,
-        setSelectedDevice
+        setSelectedDevice,
+        disable
       }}
     >
       {children}

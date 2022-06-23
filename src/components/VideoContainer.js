@@ -3,7 +3,7 @@ import { SocketContext } from "../contexts/SocketContext";
 import Controls from "./Controls";
 
 const VideoContainer = () => {
-  const { callAccepted, myVideo, userVideo, callEnded, stream, inputDevices, setSelectedDevice } =
+  const { callAccepted, myVideo, userVideo, callEnded, stream, inputDevices, setSelectedDevice, disable } =
     useContext(SocketContext);
 
   function handleChange(e) {
@@ -14,7 +14,7 @@ const VideoContainer = () => {
   return (
     <>
       <div className="bg-white fixed z-30">
-        <select onChange={handleChange}>
+        <select onChange={handleChange} disabled={disable}>
           {inputDevices.map((item, index) => (
             <option value={JSON.stringify(item)} key={index}>{item.label}</option>
           ))}
