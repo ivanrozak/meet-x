@@ -128,9 +128,11 @@ const ContextProvider = ({ children }) => {
           deviceId: selectedDevice.deviceId
         }
       }).then((newStream) => {
-        // console.log('jalan nih', newStream.getTracks())
         stream.removeTrack(currentTrack[0])
         stream.addTrack(newStream.getAudioTracks()[0])
+        console.log('=================================')
+        console.log(stream.getTracks())
+        console.log(newStream.getTracks())
         localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
       }).catch((err) => {
         console.log('userMedia', err)
@@ -142,7 +144,7 @@ const ContextProvider = ({ children }) => {
 
   const enumerateDevice = () => {
     navigator.mediaDevices.enumerateDevices().then((devices) => {
-      console.log('================')
+      console.log('~~~~~~~~~~~~~~~~~')
       console.log(devices)
       devices.forEach((deviceInfo) => {
         if (deviceInfo.kind === 'audioinput') {
