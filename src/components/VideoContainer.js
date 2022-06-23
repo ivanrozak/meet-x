@@ -50,7 +50,7 @@ const VideoContainer = () => {
         {stream && <Controls myVideo={myVideo} />}
       </main>
       <div className="bg-white fixed z-30 bottom-0 left-0">
-        Version 1.1.7
+        Version 1.1.8
       </div>
     </>
   );
