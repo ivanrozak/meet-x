@@ -56,7 +56,9 @@ const ContextProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (selectedDevice && localPeer) {
+    console.log('=======> jalan')
+    if (selectedDevice) {
+      console.log('changes switch', selectedDevice)
       switchAudio()
     }
   }, [selectedDevice])
@@ -115,41 +117,38 @@ const ContextProvider = ({ children }) => {
 
   // Code support smoothly for desktop / android
   const switchAudio = async () => {
-    try {
-      console.log('jalan disini')
-      setDisable(true)
-      const currentTrack = stream.getAudioTracks()
+    if (localPeer) {
+      try {
+        console.log('switch Audio')
+        const currentTrack = stream.getAudioTracks()
 
-      // stop sending tracks to peers
-      currentTrack.forEach((t) => t.stop())
-
-      // new stream with new device
-      await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: {
-          deviceId: selectedDevice.deviceId
-        }
-      }).then((newStream) => {
-        stream.removeTrack(currentTrack[0])
-        stream.addTrack(newStream.getAudioTracks()[0])
-        console.log('=================================')
-        console.log(stream.getTracks())
-        console.log(newStream.getTracks())
-        localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
-        setTimeout(() => {
-          setDisable(false)
-        }, 5000)
-      }).catch((err) => {
-        console.log('userMedia', err)
-      })
-    } catch (error) {
-      console.log('Switch Audio Error', error)
+        // stop sending tracks to peers
+        currentTrack.forEach((t) => t.stop())
+  
+        // new stream with new device
+        await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: {
+            deviceId: selectedDevice.deviceId
+          }
+        }).then((newStream) => {
+          stream.removeTrack(currentTrack[0])
+          stream.addTrack(newStream.getAudioTracks()[0])
+          // console.log('=================================')
+          // console.log(stream.getTracks())
+          // console.log(newStream.getTracks())
+          localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
+        }).catch((err) => {
+          console.log('userMedia', err)
+        })
+      } catch (error) {
+        console.log('Switch Audio Error', error)
+      }
     }
   }
 
   const enumerateDevice = () => {
     navigator.mediaDevices.enumerateDevices().then((devices) => {
-      console.log('~~~~~~~~~~~~~~~~~')
       console.log(devices)
       devices.forEach((deviceInfo) => {
         if (deviceInfo.kind === 'audioinput') {
@@ -164,7 +163,6 @@ const ContextProvider = ({ children }) => {
         // }
       })
       if (Object.keys(selectedDevice).length === 0) {
-        console.log('set dulu dag')
         setSelectedDevice(inputDevices[0])
       }
     })
