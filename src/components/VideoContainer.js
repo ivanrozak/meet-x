@@ -19,7 +19,7 @@ const VideoContainer = () => {
             <option value={JSON.stringify(item)} key={index}>{item.label}</option>
           ))}
         </select>
-        <div>{JSON.stringify(inputDevices)}</div>
+        {/* <div>{JSON.stringify(inputDevices)}</div> */}
       </div>
       <main className="h-full w-full flex flex-col md:flex-row items-center justify-center relative bg-gray-900">
         {stream && (
@@ -50,7 +50,7 @@ const VideoContainer = () => {
         {stream && <Controls myVideo={myVideo} />}
       </main>
       <div className="bg-white fixed z-30 bottom-0 left-0">
-        Version 1.1.8
+        Version 2.0.0
       </div>
     </>
   );
