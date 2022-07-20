@@ -34,14 +34,13 @@ const ContextProvider = ({ children }) => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((currentStream) => {
-        // console.log(currentStream.getTracks())
-        const currentAudioTrack = currentStream.getAudioTracks()[0]
-        console.log('First Audio track', currentAudioTrack)
-        const currentVideoTrack = currentStream.getVideoTracks()[0]
-        console.log('First Video track', currentVideoTrack)
         setStream(currentStream);
         myVideo.current.srcObject = currentStream;
-        enumerateDevice();
+
+        // current stream
+        currentStream.getAudioTracks().forEach((item) => {
+          console.log(item.getSettings().deviceId)
+        })
       });
 
     socket.on("me", (id) => setMe(id));
@@ -53,134 +52,74 @@ const ContextProvider = ({ children }) => {
     socket.on("reload", () => {
       window.location.reload();
     });
+    updateDeviceList();
+    listenDeviceChange();
   }, []);
 
-  useEffect(() => {
-    console.log('=======> jalan')
-    if (selectedDevice) {
-      console.log('changes switch', selectedDevice)
-      switchAudio()
+  const listenDeviceChange = () => {
+    navigator.mediaDevices.ondevicechange = () => {
+      updateDeviceList()
     }
-  }, [selectedDevice])
+  }
 
-  // handle for IPAD devices
-  // const switchAudio = async () => {
-  //   try {
-  //     console.log('jalan disini')
-  //     const currentTrack = stream.getTracks()
-  //     console.log('current Tracks', currentTrack)
-  //     const currentAudioTrack = stream.getAudioTracks()
-  //     const currentVideoTracks = stream.getVideoTracks()
-
-  //     // stop sending tracks to peers
-  //     currentTrack.forEach((t) => t.stop())
-
-  //     // new stream with new device
-  //     await navigator.mediaDevices.getUserMedia({
-  //       video: true,
-  //       audio: {
-  //         deviceId: selectedDevice.deviceId
-  //       }
-  //     }).then((newStream) => {
-  //       console.log('jalan nih', newStream)
-  //       stream.removeTrack(currentAudioTrack[0])
-  //       stream.removeTrack(currentVideoTracks[0])
-  //       // stream.addTrack(newStream.getTracks())
-  //       const newAudioTracks = newStream.getAudioTracks()[0]
-  //       const newVideoTracks = newStream.getVideoTracks()[0]
-  //       console.log('after audio', newAudioTracks)
-  //       console.log('after video', newVideoTracks)
-  //       stream.addTrack(newAudioTracks)
-  //       stream.addTrack(newVideoTracks)
-
-  //       let newTracks = []
-  //       newTracks.push(newAudioTracks)
-  //       newTracks.push(newVideoTracks)
-
-  //       console.log('==========>')
-  //       console.log(currentTrack)
-  //       console.log(newTracks)
-  //       console.log(JSON.stringify(currentTrack))
-  //       console.log(JSON.stringify(newTracks))
-
-  //       // setTimeout(() => {
-  //       // }, 1000)
-  //       localPeer.replaceTrack(currentTrack, newTracks, stream)
-
-  //     }).catch((err) => {
-  //       console.log('userMedia', err)
-  //     })
-  //   } catch (error) {
-  //     console.log('Switch Audio Error', error)
-  //   }
-  // }
-
-  // Code support smoothly for desktop / android
-  const switchAudio = async () => {
-    if (stream) {
-      stream.getTracks().forEach((t) => {
-        t.stop()
+  const updateDeviceList = () => {
+    navigator.mediaDevices.enumerateDevices().then((devices) => {
+      const listAudioDevice = []
+      devices.forEach((device) => {
+        if (device.kind === 'audioinput') {
+          listAudioDevice.push(device)
+        }
       })
-    }
+      setInputDevices(listAudioDevice)
 
-    await navigator.mediaDevices.getUserMedia({
+      if (stream) {
+        stream.getAudioTracks().forEach((item) => {
+          console.log(item.getSettings().deviceId)
+        })
+      }
+    })
+  }
+
+  const switchDevice = (deviceId) => {
+    navigator.mediaDevices.getUserMedia({
       video: true,
       audio: {
-        deviceId: selectedDevice.deviceId
+        deviceId
       }
     }).then((newStream) => {
       setStream(newStream)
+      updateDeviceList()
     })
-    // if (localPeer) {
-    //   try {
-    //     console.log('switch Audio')
-    //     const currentTrack = stream.getAudioTracks()
+  }
 
-    //     // stop sending tracks to peers
-    //     currentTrack.forEach((t) => t.stop())
+  // Code support smoothly for desktop / android
+  // const switchAudio = async () => {
+  //   if (localPeer) {
+  //     try {
+  //       console.log('switch Audio')
+  //       const currentTrack = stream.getAudioTracks()
+
+  //       // stop sending tracks to peers
+  //       currentTrack.forEach((t) => t.stop())
   
-    //     // new stream with new device
-    //     await navigator.mediaDevices.getUserMedia({
-    //       video: true,
-    //       audio: {
-    //         deviceId: selectedDevice.deviceId
-    //       }
-    //     }).then((newStream) => {
-    //       stream.removeTrack(currentTrack[0])
-    //       stream.addTrack(newStream.getAudioTracks()[0])
-    //       // console.log('=================================')
-    //       // console.log(stream.getTracks())
-    //       // console.log(newStream.getTracks())
-    //       localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
-    //     }).catch((err) => {
-    //       console.log('userMedia', err)
-    //     })
-    //   } catch (error) {
-    //     console.log('Switch Audio Error', error)
-    //   }
-    // }
-  }
-
-  const enumerateDevice = () => {
-    navigator.mediaDevices.enumerateDevices().then((devices) => {
-      console.log(devices)
-      devices.forEach((deviceInfo) => {
-        if (deviceInfo.kind === 'audioinput') {
-          setInputDevices(prevState => [...prevState, deviceInfo])
-        }
-        // } else if (deviceInfo.kind === 'audiooutput') {
-        //   console.log('audio output', deviceInfo)
-        // } else if (deviceInfo.kind === 'videoinput') {
-        //   console.log('video', deviceInfo)
-        // } else {
-        //   console.log('Some other kind of source/device: ', deviceInfo);
-        // }
-      })
-      if (Object.keys(selectedDevice).length === 0) {
-        setSelectedDevice(inputDevices[0])
-      }
-    })
-  }
+  //       // new stream with new device
+  //       await navigator.mediaDevices.getUserMedia({
+  //         video: true,
+  //         audio: {
+  //           deviceId: selectedDevice.deviceId
+  //         }
+  //       }).then((newStream) => {
+  //         stream.removeTrack(currentTrack[0])
+  //         stream.addTrack(newStream.getAudioTracks()[0])
+  //         localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
+  //       }).catch((err) => {
+  //         console.log('userMedia', err)
+  //       })
+  //     } catch (error) {
+  //       console.log('Switch Audio Error', error)
+  //     }
+  //   }
+  // }
 
   const answerCall = () => {
     setCallAccepted(true);
@@ -254,7 +193,7 @@ const ContextProvider = ({ children }) => {
         inputDevices,
         selectedDevice,
         setSelectedDevice,
-        disable
+        switchDevice
       }}
     >
       {children}
