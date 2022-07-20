@@ -117,34 +117,48 @@ const ContextProvider = ({ children }) => {
 
   // Code support smoothly for desktop / android
   const switchAudio = async () => {
-    if (localPeer) {
-      try {
-        console.log('switch Audio')
-        const currentTrack = stream.getAudioTracks()
-
-        // stop sending tracks to peers
-        currentTrack.forEach((t) => t.stop())
-  
-        // new stream with new device
-        await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: {
-            deviceId: selectedDevice.deviceId
-          }
-        }).then((newStream) => {
-          stream.removeTrack(currentTrack[0])
-          stream.addTrack(newStream.getAudioTracks()[0])
-          // console.log('=================================')
-          // console.log(stream.getTracks())
-          // console.log(newStream.getTracks())
-          localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
-        }).catch((err) => {
-          console.log('userMedia', err)
-        })
-      } catch (error) {
-        console.log('Switch Audio Error', error)
-      }
+    if (stream) {
+      stream.getTracks().forEach((t) => {
+        t.stop()
+      })
     }
+
+    await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: {
+        deviceId: selectedDevice.deviceId
+      }
+    }).then((newStream) => {
+      setStream(newStream)
+    })
+    // if (localPeer) {
+    //   try {
+    //     console.log('switch Audio')
+    //     const currentTrack = stream.getAudioTracks()
+
+    //     // stop sending tracks to peers
+    //     currentTrack.forEach((t) => t.stop())
+  
+    //     // new stream with new device
+    //     await navigator.mediaDevices.getUserMedia({
+    //       video: true,
+    //       audio: {
+    //         deviceId: selectedDevice.deviceId
+    //       }
+    //     }).then((newStream) => {
+    //       stream.removeTrack(currentTrack[0])
+    //       stream.addTrack(newStream.getAudioTracks()[0])
+    //       // console.log('=================================')
+    //       // console.log(stream.getTracks())
+    //       // console.log(newStream.getTracks())
+    //       localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
+    //     }).catch((err) => {
+    //       console.log('userMedia', err)
+    //     })
+    //   } catch (error) {
+    //     console.log('Switch Audio Error', error)
+    //   }
+    // }
   }
 
   const enumerateDevice = () => {
