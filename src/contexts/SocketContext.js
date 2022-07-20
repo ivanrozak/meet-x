@@ -81,13 +81,20 @@ const ContextProvider = ({ children }) => {
   }
 
   const switchDevice = (deviceId) => {
+    stream.getTracks().forEach((t) => {
+      t.stop()
+    })
     navigator.mediaDevices.getUserMedia({
       video: true,
       audio: {
         deviceId
       }
     }).then((newStream) => {
-      setStream(newStream)
+      // setStream(newStream)
+      stream.removeTrack(stream.getAudioTracks()[0])
+      stream.removeTrack(stream.getVideoTracks()[0])
+      stream.addTrack(newStream.getAudioTracks()[0])
+      stream.addTrack(newStream.getVideoTracks()[0])
       updateDeviceList()
     })
   }

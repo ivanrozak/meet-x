@@ -8,7 +8,7 @@ const VideoContainer = () => {
 
   function handleChange(e) {
     const value = e.target.value
-    console.log('switch device button')
+    console.log('switch device button', value)
     switchDevice(value)
     setSelectedDevice(value)
   }
@@ -51,7 +51,7 @@ const VideoContainer = () => {
         {stream && <Controls myVideo={myVideo} />}
       </main>
       <div className="bg-white fixed z-30 bottom-0 left-0">
-        Version 2.0.3
+        Version 2.0.4
       </div>
     </>
   );
