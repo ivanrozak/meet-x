@@ -99,12 +99,14 @@ const ContextProvider = ({ children }) => {
         deviceId
       }
     }).then((newStream) => {
-      stream.removeTrack(stream.getAudioTracks()[0])
+      setStream(newStream)
+      // stream.removeTrack(stream.getAudioTracks()[0])
       // stream.removeTrack(stream.getVideoTracks()[0])
-      stream.addTrack(newStream.getAudioTracks()[0])
+      // stream.addTrack(newStream.getAudioTracks()[0])
       // stream.addTrack(newStream.getVideoTracks()[0])
 
       if (localPeer) {
+        console.log('masuk ke local peer')
         localPeer.replaceTrack(stream.getAudioTracks()[0], newStream.getAudioTracks()[0], stream)
         // localPeer.replaceTrack(stream.getVideoTracks()[0], newStream.getVideoTracks()[0], stream)
       }
