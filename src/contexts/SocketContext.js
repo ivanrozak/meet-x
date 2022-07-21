@@ -91,31 +91,27 @@ const ContextProvider = ({ children }) => {
   }
 
   const switchDevice = (deviceId) => {
-    // stream.getAudioTracks().forEach((t) => {
-    //   t.stop()
-    // })
+    stream.getAudioTracks().forEach((t) => {
+      t.stop()
+    })
     // if (localPeer) {
     //   localPeer.removeStream(stream)
     // }
     navigator.mediaDevices.getUserMedia({
-      video: true,
+      video: false,
       audio: {
         deviceId
       }
     }).then((newStream) => {
-      // setStream(newStream)
       // myVideo.current.srcObject = newStream;
       stream.removeTrack(stream.getAudioTracks()[0])
-      stream.removeTrack(stream.getVideoTracks()[0])
+      // stream.removeTrack(stream.getVideoTracks()[0])
       stream.addTrack(newStream.getAudioTracks()[0])
-      stream.addTrack(newStream.getVideoTracks()[0])
+      // stream.addTrack(newStream.getVideoTracks()[0])
 
       if (localPeer) {
         console.log('masuk ke local peer')
-        // localPeer.addStream(newStream)
-        // localPeer.replaceTrack(stream.getTracks(), newStream.getTracks(), stream)
-        // localPeer.replaceTrack(stream.getAudioTracks()[0], newStream.getAudioTracks()[0], stream)
-        // localPeer.replaceTrack(stream.getVideoTracks()[0], newStream.getVideoTracks()[0], stream)
+        localPeer.replaceTrack(stream.getAudioTracks()[0], newStream.getAudioTracks()[0], stream)
       }
       updateDeviceList()
     })
