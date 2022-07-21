@@ -34,7 +34,7 @@ const ContextProvider = ({ children }) => {
       .getUserMedia({ video: true, audio: true })
       .then((currentStream) => {
         setStream(currentStream);
-        myVideo.current.srcObject = currentStream;
+        // myVideo.current.srcObject = currentStream;
 
         // current stream
         currentStream.getAudioTracks().forEach((item) => {
@@ -55,6 +55,13 @@ const ContextProvider = ({ children }) => {
       window.location.reload();
     });
   }, []);
+
+  useEffect(() => {
+    if (stream) {
+      console.log('stream change')
+      myVideo.current.srcObject = stream;
+    }
+  }, [stream])
 
   const listenDeviceChange = () => {
     navigator.mediaDevices.ondevicechange = () => {
@@ -83,7 +90,7 @@ const ContextProvider = ({ children }) => {
   }
 
   const switchDevice = (deviceId) => {
-    stream.getTracks().forEach((t) => {
+    stream.getAudioTracks().forEach((t) => {
       t.stop()
     })
     navigator.mediaDevices.getUserMedia({
@@ -93,13 +100,13 @@ const ContextProvider = ({ children }) => {
       }
     }).then((newStream) => {
       stream.removeTrack(stream.getAudioTracks()[0])
-      stream.removeTrack(stream.getVideoTracks()[0])
+      // stream.removeTrack(stream.getVideoTracks()[0])
       stream.addTrack(newStream.getAudioTracks()[0])
-      stream.addTrack(newStream.getVideoTracks()[0])
+      // stream.addTrack(newStream.getVideoTracks()[0])
 
       if (localPeer) {
         localPeer.replaceTrack(stream.getAudioTracks()[0], newStream.getAudioTracks()[0], stream)
-        localPeer.replaceTrack(stream.getVideoTracks()[0], newStream.getVideoTracks()[0], stream)
+        // localPeer.replaceTrack(stream.getVideoTracks()[0], newStream.getVideoTracks()[0], stream)
       }
       updateDeviceList()
     })
