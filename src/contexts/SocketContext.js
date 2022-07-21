@@ -41,8 +41,8 @@ const ContextProvider = ({ children }) => {
           console.log(item.getSettings().deviceId)
         })
 
-        // updateDeviceList();
-        // listenDeviceChange();
+        updateDeviceList();
+        listenDeviceChange();
       });
 
     socket.on("me", (id) => setMe(id));
