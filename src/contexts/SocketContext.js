@@ -91,9 +91,9 @@ const ContextProvider = ({ children }) => {
   }
 
   const switchDevice = (deviceId) => {
-    stream.getAudioTracks().forEach((t) => {
-      t.stop()
-    })
+    // stream.getAudioTracks().forEach((t) => {
+    //   t.stop()
+    // })
     // if (localPeer) {
     //   localPeer.removeStream(stream)
     // }
@@ -103,12 +103,12 @@ const ContextProvider = ({ children }) => {
         deviceId
       }
     }).then((newStream) => {
-      setStream(newStream)
-      myVideo.current.srcObject = newStream;
-      // stream.removeTrack(stream.getAudioTracks()[0])
-      // stream.removeTrack(stream.getVideoTracks()[0])
-      // stream.addTrack(newStream.getAudioTracks()[0])
-      // stream.addTrack(newStream.getVideoTracks()[0])
+      // setStream(newStream)
+      // myVideo.current.srcObject = newStream;
+      stream.removeTrack(stream.getAudioTracks()[0])
+      stream.removeTrack(stream.getVideoTracks()[0])
+      stream.addTrack(newStream.getAudioTracks()[0])
+      stream.addTrack(newStream.getVideoTracks()[0])
 
       if (localPeer) {
         console.log('masuk ke local peer')
