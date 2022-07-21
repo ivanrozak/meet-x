@@ -17,7 +17,7 @@ const ContextProvider = ({ children }) => {
   const [call, setCall] = useState({});
   const [me, setMe] = useState("");
   const [inputDevices, setInputDevices] = useState([])
-  const [selectedDevice, setSelectedDevice] = useState({})
+  const [selectedDevice, setSelectedDevice] = useState()
 
   const myVideo = useRef();
   const userVideo = useRef();
