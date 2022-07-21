@@ -41,7 +41,8 @@ const ContextProvider = ({ children }) => {
           console.log(item.getSettings().deviceId)
         })
 
-        updateDeviceList();
+        // updateDeviceList();
+        // listenDeviceChange();
       });
 
     socket.on("me", (id) => setMe(id));
@@ -53,7 +54,6 @@ const ContextProvider = ({ children }) => {
     socket.on("reload", () => {
       window.location.reload();
     });
-    listenDeviceChange();
   }, []);
 
   const listenDeviceChange = () => {
