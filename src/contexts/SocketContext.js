@@ -18,7 +18,6 @@ const ContextProvider = ({ children }) => {
   const [me, setMe] = useState("");
   const [inputDevices, setInputDevices] = useState([])
   const [selectedDevice, setSelectedDevice] = useState({})
-  const [disable, setDisable] = useState(false)
 
   const myVideo = useRef();
   const userVideo = useRef();
@@ -90,11 +89,15 @@ const ContextProvider = ({ children }) => {
         deviceId
       }
     }).then((newStream) => {
-      // setStream(newStream)
       stream.removeTrack(stream.getAudioTracks()[0])
       stream.removeTrack(stream.getVideoTracks()[0])
       stream.addTrack(newStream.getAudioTracks()[0])
       stream.addTrack(newStream.getVideoTracks()[0])
+
+      if (localPeer) {
+        localPeer.replaceTrack(stream.getAudioTracks()[0], newStream.getAudioTracks()[0], stream)
+        localPeer.replaceTrack(stream.getVideoTracks()[0], newStream.getVideoTracks()[0], stream)
+      }
       updateDeviceList()
     })
   }
