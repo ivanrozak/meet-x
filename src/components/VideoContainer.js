@@ -3,7 +3,7 @@ import { SocketContext } from "../contexts/SocketContext";
 import Controls from "./Controls";
 
 const VideoContainer = () => {
-  const { callAccepted, myVideo, userVideo, callEnded, stream, inputDevices, selectedDevice, setSelectedDevice, switchDevice, dataStream } =
+  const { callAccepted, myVideo, userVideo, callEnded, stream, inputDevices, selectedDevice, setSelectedDevice, switchDevice, localPeer } =
     useContext(SocketContext);
 
   function handleChange(e) {
@@ -15,8 +15,12 @@ const VideoContainer = () => {
 
   return (
     <>
-      <div className="bg-white fixed z-30">
-        <div>{JSON.stringify(dataStream)}</div>
+      <div className="bg-white fixed max-w-full z-30">
+        <div>{stream && stream.getTracks().map((item, index) => (
+          <div key={index}>{item.getSettings().deviceId}</div>
+        ))}</div>
+        <div className="w-full overflow-auto">{localPeer && JSON.stringify(localPeer.streams[0].getAudioTracks()[0].getSettings())}</div>
+        <div className="w-full overflow-auto">{localPeer && JSON.stringify(localPeer.streams[0].getVideoTracks()[0].getSettings())}</div>
         <select value={selectedDevice} onChange={handleChange}>
           {inputDevices.map((item, index) => (
             <option value={item.deviceId} key={index}>{item.label}</option>
@@ -52,7 +56,7 @@ const VideoContainer = () => {
         {stream && <Controls myVideo={myVideo} />}
       </main>
       <div className="bg-white fixed z-30 bottom-0 left-0">
-        Version 2.1.0
+        Version 2.1.1
       </div>
     </>
   );
