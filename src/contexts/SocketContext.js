@@ -40,6 +40,8 @@ const ContextProvider = ({ children }) => {
         currentStream.getAudioTracks().forEach((item) => {
           console.log(item.getSettings().deviceId)
         })
+
+        updateDeviceList();
       });
 
     socket.on("me", (id) => setMe(id));
@@ -51,7 +53,6 @@ const ContextProvider = ({ children }) => {
     socket.on("reload", () => {
       window.location.reload();
     });
-    updateDeviceList();
     listenDeviceChange();
   }, []);
 
