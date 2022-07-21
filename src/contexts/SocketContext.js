@@ -38,7 +38,7 @@ const ContextProvider = ({ children }) => {
 
         // current stream
         currentStream.getAudioTracks().forEach((item) => {
-          console.log(item.getSettings().deviceId)
+          console.log('first current stream', item.getSettings().deviceId)
         })
 
         updateDeviceList();
@@ -73,9 +73,11 @@ const ContextProvider = ({ children }) => {
       setInputDevices(listAudioDevice)
 
       if (stream) {
-        stream.getAudioTracks().forEach((item) => {
-          console.log(item.getSettings().deviceId)
-        })
+        setTimeout(() => {
+          stream.getAudioTracks().forEach((item) => {
+            console.log('stream after change', item.getSettings().deviceId)
+          })
+        }, 3000)
       }
     })
   }
