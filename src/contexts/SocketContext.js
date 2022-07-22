@@ -34,12 +34,12 @@ const ContextProvider = ({ children }) => {
       .getUserMedia({ video: true, audio: true })
       .then((currentStream) => {
         setStream(currentStream);
-        // myVideo.current.srcObject = currentStream;
+        myVideo.current.srcObject = currentStream;
 
         // current stream
-        currentStream.getAudioTracks().forEach((item) => {
-          console.log('first current stream', item.getSettings().deviceId)
-        })
+        // currentStream.getAudioTracks().forEach((item) => {
+        //   console.log('first current stream', item.getSettings().deviceId)
+        // })
 
         updateDeviceList();
         listenDeviceChange();
@@ -56,12 +56,12 @@ const ContextProvider = ({ children }) => {
     });
   }, []);
 
-  useEffect(() => {
-    if (stream) {
-      console.log('stream change')
-      myVideo.current.srcObject = stream;
-    }
-  }, [stream])
+  // useEffect(() => {
+  //   if (stream) {
+  //     console.log('stream change')
+  //     myVideo.current.srcObject = stream;
+  //   }
+  // }, [stream])
 
   const listenDeviceChange = () => {
     navigator.mediaDevices.ondevicechange = () => {
@@ -91,12 +91,10 @@ const ContextProvider = ({ children }) => {
   }
 
   const switchDevice = (deviceId) => {
-    stream.getAudioTracks().forEach((t) => {
+    const currentTrack = stream.getAudioTracks()
+    currentTrack.forEach((t) => {
       t.stop()
     })
-    // if (localPeer) {
-    //   localPeer.removeStream(stream)
-    // }
     navigator.mediaDevices.getUserMedia({
       video: false,
       audio: {
@@ -104,14 +102,15 @@ const ContextProvider = ({ children }) => {
       }
     }).then((newStream) => {
       // myVideo.current.srcObject = newStream;
-      stream.removeTrack(stream.getAudioTracks()[0])
+      stream.removeTrack(currentTrack[0])
       // stream.removeTrack(stream.getVideoTracks()[0])
       stream.addTrack(newStream.getAudioTracks()[0])
       // stream.addTrack(newStream.getVideoTracks()[0])
 
       if (localPeer) {
-        console.log('masuk ke local peer')
-        localPeer.replaceTrack(stream.getAudioTracks()[0], newStream.getAudioTracks()[0], stream)
+        console.log('masuk ke local peer', stream.getAudioTracks()[0])
+        console.log('masuk ke local peer 2', currentTrack[0])
+        localPeer.replaceTrack(currentTrack[0], newStream.getAudioTracks()[0], stream)
       }
       updateDeviceList()
     })
