@@ -24,6 +24,10 @@ const ContextProvider = ({ children }) => {
   const connectionRef = useRef();
 
   const ringTone = new Audio("https://ydbucketstorage.s3.ap-southeast-1.amazonaws.com/audio/speaker_test_yesdok.mp3")
+  const playAudio = () => {
+    console.log('audio played')
+    ringTone.play()
+  }
 
   useEffect(() => {
     const nameInStorage = window.localStorage.getItem("name");
@@ -32,10 +36,10 @@ const ContextProvider = ({ children }) => {
       setName(nameInStorage);
     }
 
-    setTimeout(() => {
-      console.log("playing audio")
-      ringTone.play()
-    }, 2000)
+    // setTimeout(() => {
+    //   console.log("playing audio")
+    //   ringTone.play()
+    // }, 2000)
 
     // navigator.mediaDevices
     //   .getUserMedia({ video: true, audio: true })
@@ -225,7 +229,8 @@ const ContextProvider = ({ children }) => {
         selectedDevice,
         setSelectedDevice,
         switchDevice,
-        localPeer
+        localPeer,
+        playAudio
       }}
     >
       {children}

@@ -3,7 +3,7 @@ import { SocketContext } from "../contexts/SocketContext";
 import Controls from "./Controls";
 
 const VideoContainer = () => {
-  const { callAccepted, myVideo, userVideo, callEnded, stream, inputDevices, selectedDevice, setSelectedDevice, switchDevice, localPeer } =
+  const { callAccepted, myVideo, userVideo, callEnded, stream, inputDevices, selectedDevice, setSelectedDevice, switchDevice, playAudio } =
     useContext(SocketContext);
 
   function handleChange(e) {
@@ -55,6 +55,9 @@ const VideoContainer = () => {
       </main>
       <div className="bg-white fixed z-30 bottom-0 left-0">
         Version 2.1.4
+        <div>
+        <button onClick={playAudio}>Play Audio</button>
+      </div>
       </div>
     </>
   );
