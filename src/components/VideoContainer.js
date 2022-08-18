@@ -19,8 +19,6 @@ const VideoContainer = () => {
         <div>{stream && stream.getTracks().map((item, index) => (
           <div key={index}>{item.getSettings().deviceId}</div>
         ))}</div>
-        {/* <div className="w-full overflow-auto">{localPeer && JSON.stringify(localPeer.streams[0].getAudioTracks()[0].getSettings())}</div>
-        <div className="w-full overflow-auto">{localPeer && JSON.stringify(localPeer.streams[0].getVideoTracks()[0].getSettings())}</div> */}
         <select value={selectedDevice} onChange={handleChange}>
           {inputDevices.map((item, index) => (
             <option value={item.deviceId} key={index}>{item.label}</option>
@@ -56,7 +54,7 @@ const VideoContainer = () => {
         {stream && <Controls myVideo={myVideo} />}
       </main>
       <div className="bg-white fixed z-30 bottom-0 left-0">
-        Version 2.1.3
+        Version 2.1.4
       </div>
     </>
   );

@@ -23,6 +23,8 @@ const ContextProvider = ({ children }) => {
   const userVideo = useRef();
   const connectionRef = useRef();
 
+  const ringTone = new Audio("https://ydbucketstorage.s3.ap-southeast-1.amazonaws.com/audio/speaker_test_yesdok.mp3")
+
   useEffect(() => {
     const nameInStorage = window.localStorage.getItem("name");
 
@@ -30,20 +32,25 @@ const ContextProvider = ({ children }) => {
       setName(nameInStorage);
     }
 
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((currentStream) => {
-        setStream(currentStream);
-        myVideo.current.srcObject = currentStream;
+    setTimeout(() => {
+      console.log("playing audio")
+      ringTone.play()
+    }, 2000)
 
-        // current stream
-        // currentStream.getAudioTracks().forEach((item) => {
-        //   console.log('first current stream', item.getSettings().deviceId)
-        // })
+    // navigator.mediaDevices
+    //   .getUserMedia({ video: true, audio: true })
+    //   .then((currentStream) => {
+    //     setStream(currentStream);
+    //     myVideo.current.srcObject = currentStream;
 
-        updateDeviceList();
-        listenDeviceChange();
-      });
+    //     // current stream
+    //     // currentStream.getAudioTracks().forEach((item) => {
+    //     //   console.log('first current stream', item.getSettings().deviceId)
+    //     // })
+
+    //     updateDeviceList();
+    //     listenDeviceChange();
+    //   });
 
     socket.on("me", (id) => setMe(id));
 
